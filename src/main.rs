@@ -26,9 +26,6 @@ fn main() -> Result<()> {
         .arg(Arg::with_name("silent").short("s").long("silent"))
         .get_matches();
 
-    // match the options!
-    let infile = matches.value_of("infile").unwrap_or_default();
-    let outfile = matches.value_of("outfile").unwrap_or_default();
     // if the option isn't present, use the command line argument
     let be_silent = if matches.is_present("silent") {
         true
