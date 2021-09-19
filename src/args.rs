@@ -5,7 +5,7 @@ use std::env;
 pub struct Args {
     pub infile: String,
     pub outfile: String,
-    pub silent: bool
+    pub silent: bool,
 }
 
 // IMPLement a TRAIT on the struct Args, similar to how we implement
@@ -26,14 +26,8 @@ impl Args {
             .get_matches();
 
         // match the command line arguments
-        let infile = matches
-            .value_of("infile")
-            .unwrap_or_default()
-            .to_string();
-        let outfile = matches
-            .value_of("outfile")
-            .unwrap_or_default()
-            .to_string();
+        let infile = matches.value_of("infile").unwrap_or_default().to_string();
+        let outfile = matches.value_of("outfile").unwrap_or_default().to_string();
 
         // if the option isn't present, use the command line argument
         let silent = if matches.is_present("silent") {
@@ -49,7 +43,9 @@ impl Args {
 
         // return the parsed Data
         Self {
-            infile, outfile, silent
+            infile,
+            outfile,
+            silent,
         }
     }
 }

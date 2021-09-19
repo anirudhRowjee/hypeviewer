@@ -3,40 +3,40 @@
 //! Command Line Arguments:
 //! <infile | optional, positional> <outfile> <silent>
 
-use std::io::Result;
+use crossbeam::channel::{bounded, unbounded};
 use hypeviewer::{args::Args, read, stats, write};
+use std::io::Result;
+use std::thread;
 
 // the main function can return an error!
 fn main() -> Result<()> {
-
-
     let args = Args::parse();
-    let mut total_bytes = 0;
 
+    // destructure into struct
+    let Args {
+        infile,
+        outfile,
+        silent,
+    } = args;
 
-    loop {
+    //? naming convention -> (transmit_to_thread, recieve_in_thread)
+    let (tx_to_stats, rx_in_stats) = unbounded();
+    let (tx_to_write, rx_in_write) = bounded(1024);
 
-        // read all the data
-        let buffer = match read::read(&args.infile)
-        {
-            Ok(x) if x.is_empty() => break,
-            Ok(x) => x,
-            Err(_) => break,
-        };
+    // spawn all thread handlers
+    let read_handle = thread::spawn(move || read::read_loop(&infile, tx_to_stats, tx_to_write));
+    let stats_handle = thread::spawn(move || stats::stats_loop(silent, rx_in_stats));
+    let write_handle = thread::spawn(move || write::write_loop(&outfile, rx_in_write));
 
-        // gather statistics
-        stats::stats(args.silent, buffer.len(), &mut total_bytes, false);
+    // set this up to crash main() if any single thread crashes
+    // `.join()` returns a result of results
+    let read_io_result = read_handle.join().unwrap();
+    let stats_io_result = stats_handle.join().unwrap();
+    let write_io_result = write_handle.join().unwrap();
 
-        // write to whatever output we want to
-        if !write::write(&args.outfile, &buffer)? {
-            // exit on error
-            break;
-        }
-
-    }
-
-    // final block of statistics
-    stats::stats(args.silent, 0, &mut total_bytes, true);
+    read_io_result?;
+    stats_io_result?;
+    write_io_result?;
 
     Ok(())
 }

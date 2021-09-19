@@ -1,11 +1,14 @@
 use crate::BUF_SIZE;
 use std::fs::File;
 use std::io::{self, BufReader, Read, Result};
+use crossbeam::channel::Sender;
 
 // declare the read function to handle all reading logic
-pub fn read(infile: &str) -> Result<Vec<u8>>
-{
-
+pub fn read_loop(
+    infile: &str, 
+    tx_to_stats: Sender<usize>, 
+    tx_to_write: Sender<Vec<u8>>
+) -> Result<()> {
     let mut databuf = [0; BUF_SIZE];
 
     let mut reader: Box<dyn Read> = if !infile.is_empty() {
@@ -16,12 +19,29 @@ pub fn read(infile: &str) -> Result<Vec<u8>>
         Box::new(BufReader::new(io::stdin()))
     };
 
-    // since we return a Result type, we no longer need to break - we can 
+    // since we return a Result type, we no longer need to break - we can
     // just return an empty Vec<u8> for the errors along with e, and hence we
     // use the ? error redirection operator
 
-    let bytes_read = reader.read(&mut databuf)?; 
+    loop {
+        // read all the data
+        let bytes_read = match reader.read(&mut databuf) {
+            Ok(0) => break,
+            Ok(x) => x,
+            Err(_) => break,
+        };
 
-    Ok(Vec::from(&databuf[..bytes_read]))
+        // send value to stats thread 
+        let _ = tx_to_stats.send(bytes_read);
+
+        // send this buffer to the stats and writer thread, and check if it's an error
+        if tx_to_write.send(Vec::from(&databuf[..bytes_read])).is_err() {
+            break;
+        }
+    }
+    // TODO send an empty buffer to the stats and writer threads
+
+    let _ = tx_to_stats.send(0);
+    let _ = tx_to_write.send(Vec::new());
+    Ok(())
 }
-
