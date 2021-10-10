@@ -1,8 +1,15 @@
 [package]
 name = "hypeviewer"
-version = "0.1.0"
+version = "1.0.0"
 authors = ['Anirudh Rowjee <ani.rowjee@gmail.com>']
 edition = "2018"
+description = "Educational Clone of Pipviewer"
+homepage = "https://github.com/anirudhRowjee/hypeviewer"
+repository = "https://github.com/anirudhRowjee/hypeviewer"
+readme = "README.md"
+keywords = ["educational"]
+categories = ["command-line-utilities"]
+license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

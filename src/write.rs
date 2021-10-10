@@ -1,6 +1,6 @@
+use crossbeam::channel::Receiver;
 use std::fs::File;
 use std::io::{self, BufWriter, ErrorKind, Result, Write};
-use crossbeam::channel::Receiver;
 
 pub fn write_loop(outfile: &str, rx_from_stats: Receiver<Vec<u8>>) -> Result<()> {
     // create Generic `reader` and `writer` handles that both are the same type

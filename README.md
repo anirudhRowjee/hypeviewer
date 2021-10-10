@@ -10,10 +10,5 @@ Hypeviewer is a clone of the command-line utility `pv` (pipviewer) written in Ru
 
 ## Run
 1. Clone this repository
-2. `$ source | cargo run -- <command line arguments> | destination`
-
-## Command Line Arguments
-```
-TODO
-```
+2. `$ source | cargo run -- <command line arguments> | destination` or `$ source | cargo run -- -o <destination>`
 

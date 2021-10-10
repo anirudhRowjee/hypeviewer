@@ -1,13 +1,13 @@
 use crate::BUF_SIZE;
+use crossbeam::channel::Sender;
 use std::fs::File;
 use std::io::{self, BufReader, Read, Result};
-use crossbeam::channel::Sender;
 
 // declare the read function to handle all reading logic
 pub fn read_loop(
-    infile: &str, 
-    tx_to_stats: Sender<usize>, 
-    tx_to_write: Sender<Vec<u8>>
+    infile: &str,
+    tx_to_stats: Sender<usize>,
+    tx_to_write: Sender<Vec<u8>>,
 ) -> Result<()> {
     let mut databuf = [0; BUF_SIZE];
 
@@ -31,7 +31,7 @@ pub fn read_loop(
             Err(_) => break,
         };
 
-        // send value to stats thread 
+        // send value to stats thread
         let _ = tx_to_stats.send(bytes_read);
 
         // send this buffer to the stats and writer thread, and check if it's an error
@@ -44,4 +44,5 @@ pub fn read_loop(
     let _ = tx_to_stats.send(0);
     let _ = tx_to_write.send(Vec::new());
     Ok(())
+    // " "let _ = Sende
 }

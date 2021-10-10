@@ -1,3 +1,5 @@
+//! Hypeviewer - A simple clone of `pipeviewer`
+
 pub mod args;
 pub mod read;
 pub mod stats;
