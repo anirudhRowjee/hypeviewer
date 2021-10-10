@@ -1,4 +1,4 @@
-use std::time::{Instant, Duration};
+use std::time::{Duration, Instant};
 
 // make it easier for us to do timer operations
 pub struct Timer {
@@ -6,11 +6,10 @@ pub struct Timer {
     pub delta: Duration,
     pub period: Duration,
     pub countdown: Duration,
-    pub ready: bool
+    pub ready: bool,
 }
 
 impl Timer {
-
     pub fn new() -> Self {
         let now = Instant::now();
         Self {
@@ -18,7 +17,7 @@ impl Timer {
             delta: Duration::default(),
             period: Duration::from_millis(1000),
             countdown: Duration::default(),
-            ready: true
+            ready: true,
         }
     }
 

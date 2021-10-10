@@ -3,7 +3,6 @@
 //! # Further improvements
 //! We can consider adding a GUI to display a graph.
 
-
 mod timer;
 
 use std::io::Result;
@@ -75,7 +74,6 @@ impl TimeOutput for u64 {
     }
 }
 
-
 // declare some tests
 #[cfg(test)] // this line ensures the module only compiles when there are tests
 mod tests {
@@ -89,12 +87,10 @@ mod tests {
             (30_u64, "0:00:30"),
             (120_u64, "0:02:00"),
             (313_u64, "0:05:13"),
-            (3603_u64, "1:00:03")
+            (3603_u64, "1:00:03"),
         ];
         for (input, output) in pairs {
-            assert_eq!(
-                input.as_time().as_str(), output
-            )
+            assert_eq!(input.as_time().as_str(), output)
         }
     }
 }
